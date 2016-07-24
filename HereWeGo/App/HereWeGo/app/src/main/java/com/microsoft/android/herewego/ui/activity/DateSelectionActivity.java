@@ -1,4 +1,4 @@
-package com.microsoft.android.herewego.ui;
+package com.microsoft.android.herewego.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,12 +9,12 @@ import android.view.View;
 
 import com.microsoft.android.herewego.R;
 
-public class LocationSelectionActivity extends AppCompatActivity {
+public class DateSelectionActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_selection);
+        setContentView(R.layout.activity_date_selection);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

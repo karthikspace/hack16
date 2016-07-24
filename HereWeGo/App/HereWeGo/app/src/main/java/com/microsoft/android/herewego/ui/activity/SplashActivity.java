@@ -1,10 +1,9 @@
-package com.microsoft.android.herewego.ui;
+package com.microsoft.android.herewego.ui.activity;
 
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 
 import com.microsoft.android.herewego.R;
 
