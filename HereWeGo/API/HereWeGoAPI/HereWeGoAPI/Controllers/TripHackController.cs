@@ -6,12 +6,11 @@ using System.Web.Mvc;
 
 namespace HereWeGoAPI.Controllers
 {
-    public class HomeController : Controller
+    public class TripHackController : Controller
     {
+        // GET: TripHack
         public ActionResult Index()
         {
-            ViewBag.Title = "Home Page";
-
             return View();
         }
     }
