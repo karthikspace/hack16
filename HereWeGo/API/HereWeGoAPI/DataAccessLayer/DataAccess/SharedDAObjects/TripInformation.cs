@@ -43,6 +43,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         Upcoming,
         InProgress,
         Completed,
-        Canceled
+        Canceled,
+        Deleted
     }
 }

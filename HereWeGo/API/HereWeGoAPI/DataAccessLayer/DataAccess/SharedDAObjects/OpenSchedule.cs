@@ -16,10 +16,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         [DataMember(Order = 0, Name = "DW")]
         public IList<char> DayOfWeek { get; set; }
 
-        [DataMember(Order = 1, Name = "OT")]
-        public TimeSpan OpenTime { get; set; }
-
-        [DataMember(Order = 2, Name = "CT")]
-        public TimeSpan CloseTime { get; set; }
+        [DataMember(Order = 1, Name = "OCT")]
+        public IList<Tuple<DateTime, DateTime>> OpenCloseTimes { get; set; }
     }
 }
