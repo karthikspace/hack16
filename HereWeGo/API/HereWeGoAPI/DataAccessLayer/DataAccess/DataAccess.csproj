@@ -48,6 +48,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharedDAObjects\Destination.cs" />
     <Compile Include="SharedDAObjects\LocationInfo.cs" />
+    <Compile Include="SharedDAObjects\OpenSchedule.cs" />
+    <Compile Include="SharedDAObjects\Review.cs" />
     <Compile Include="SharedDAObjects\TripInformation.cs" />
     <Compile Include="SharedDAObjects\UserInformation.cs" />
   </ItemGroup>

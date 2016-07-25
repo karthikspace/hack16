@@ -207,7 +207,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.Azure
                 string currentPartitionKey = string.Empty;
 
                 // TODO: Put correct table name once decided
-                TableName currentTableName = TableName.TransactionHistory;
+                TableName currentTableName = TableName.UserInformation;
 
                 int entityCount = 0;
                 IAzureDATableContext context = AzureTableContextFactory.CreateAzureTableContext();

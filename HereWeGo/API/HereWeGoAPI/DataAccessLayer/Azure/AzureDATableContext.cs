@@ -255,10 +255,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.Azure
             // PII Data is stored in 3 Tables Currently
             switch (tableName)
             {
-                case TableName.UserProfile:
-                case TableName.EmailIndex:
-                case TableName.PhoneIndex:
-                case TableName.BruidIndex:
+                case TableName.UserInformation:
                     return TableEncryptedRequestOptions;
                 default:
                     return null;
