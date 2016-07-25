@@ -51,6 +51,7 @@
     <Compile Include="SharedDAObjects\OpenSchedule.cs" />
     <Compile Include="SharedDAObjects\Review.cs" />
     <Compile Include="SharedDAObjects\TripInformation.cs" />
+    <Compile Include="SharedDAObjects\TripSchedule.cs" />
     <Compile Include="SharedDAObjects\UserInformation.cs" />
   </ItemGroup>
   <ItemGroup>

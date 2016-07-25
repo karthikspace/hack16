@@ -22,7 +22,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         public string Name { get; set; }
 
         [DataMember(Order = 2, Name = "I")]
-        public string ImageUrl { get; set; }
+        public IList<string> Images { get; set; }
 
         [DataMember(Order = 3, Name = "C")]
         public string City { get; set; }
@@ -47,5 +47,17 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
 
         [DataMember(Order = 10, Name = "RS")]
         public IList<Review> Reviews { get; set; }
+
+        [DataMember(Order = 11, Name = "CY")]
+        public Category Category { get; set; }
+
+        [DataMember(Order = 12, Name = "AR")]
+        public float AverageRating { get; set; }
+    }
+
+    public enum Category
+    {
+        Entertainment,
+        Religious
     }
 }

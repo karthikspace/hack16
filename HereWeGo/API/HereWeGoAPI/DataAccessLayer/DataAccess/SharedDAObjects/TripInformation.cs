@@ -22,9 +22,6 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         [DataMember(Order = 1, Name = "D")]
         public string DestinationId { get; set; }
 
-        [DataMember(Order = 2, Name = "DI")]
-        public string DestinationImage { get; set; }
-
         [DataMember(Order = 3, Name = "SD")]
         public DateTime StartDateUTC { get; set; }
 
@@ -35,7 +32,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         /// List of all the locations included in the trip
         /// </summary>
         [DataMember(Order = 5, Name = "LS")]
-        public IList<string> Locations { get; set; }
+        public IList<TripSchedule> Locations { get; set; }
 
         [DataMember(Order = 6, Name = "TS")]
         public TripStatus TripStatus { get; set; }

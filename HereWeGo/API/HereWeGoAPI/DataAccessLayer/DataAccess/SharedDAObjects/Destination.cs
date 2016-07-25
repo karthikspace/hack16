@@ -22,7 +22,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         public string Name { get; set; }
 
         [DataMember(Order = 2, Name = "I")]
-        public string ImageUrl { get; set; }
+        public IList<string> Images { get; set; }
 
         /// <summary>
         /// List of all the locations associated with a destination
