@@ -221,15 +221,11 @@
 
     public enum TableName
     {
-        DAObject,  // Default table
-        /*UserProfile,
-        UserActivitySummary,
-        TransactionHistory,
-        RedemptionHistory,
-        EmailIndex,
-        PhoneIndex,
-        BruidIndex,
-        DailySearchActivity*/
+        DAObject,
+        UserInformation,
+        TripInformation,
+        LocationInfo,
+        Destination // Table to keep a map of all the locations with a desination
     }
 
     public enum MessageQueueName

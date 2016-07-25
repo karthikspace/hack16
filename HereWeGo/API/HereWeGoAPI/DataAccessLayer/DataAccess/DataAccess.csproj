@@ -46,22 +46,10 @@
     <Compile Include="DataAccessImplementation.cs" />
     <Compile Include="MessageQueues\MessageQueueAccessImplementation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SharedDAObjects\BruidIndex.cs" />
-    <Compile Include="SharedDAObjects\EmailIndex.cs" />
-    <Compile Include="SharedDAObjects\LogDataDefinitions\UserSearchRecord.cs" />
-    <Compile Include="SharedDAObjects\OfferInfo.cs" />
-    <Compile Include="SharedDAObjects\PhoneIndex.cs" />
-    <Compile Include="SharedDAObjects\PhoneOtp.cs" />
-    <Compile Include="SharedDAObjects\Redemption.cs" />
-    <Compile Include="SharedDAObjects\RedemptionHistory.cs" />
-    <Compile Include="SharedDAObjects\SearchDataStorage\DailySearchActivity.cs" />
-    <Compile Include="SharedDAObjects\SearchDataStorage\DailyUserActivity.cs" />
-    <Compile Include="SharedDAObjects\SearchDataStorage\SearchRecord.cs" />
-    <Compile Include="SharedDAObjects\Transaction.cs" />
-    <Compile Include="SharedDAObjects\TransactionHistory.cs" />
-    <Compile Include="SharedDAObjects\UserActivitySummary.cs" />
-    <Compile Include="SharedDAObjects\UserBalance.cs" />
-    <Compile Include="SharedDAObjects\UserProfile.cs" />
+    <Compile Include="SharedDAObjects\Destination.cs" />
+    <Compile Include="SharedDAObjects\LocationInfo.cs" />
+    <Compile Include="SharedDAObjects\TripInformation.cs" />
+    <Compile Include="SharedDAObjects\UserInformation.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Azure\Azure.csproj">

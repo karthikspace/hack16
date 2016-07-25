@@ -1,0 +1,46 @@
+﻿//-----------------------------------------------------------------------
+// <copyright file="LocationInfo.cs" company="Microsoft">
+//     Copyright (c) Microsoft. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
+{
+    using System.Runtime.Serialization;
+    using Microsoft.RewardsIntl.Platform.DataAccess.Common;
+
+    [DAClass(Namespace = "LI", TableName = TableName.LocationInfo)]
+    [DataContract(Name = "LI", Namespace = "")]
+    public class LocationInfo
+    {
+        [DAPartitionKey]
+        [DataMember(Order = 0, Name = "ID")]
+        public string Id { get; set; }
+
+        [DataMember(Order = 1, Name = "N")]
+        public string Name { get; set; }
+
+        [DataMember(Order = 2, Name = "I")]
+        public string ImageUrl { get; set; }
+
+        [DataMember(Order = 3, Name = "C")]
+        public string City { get; set; }
+
+        [DataMember(Order = 4, Name = "CN")]
+        public string Country{ get; set; }
+
+        [DataMember(Order = 5, Name = "S")]
+        public string Summary { get; set; }
+
+        [DataMember(Order = 6, Name = "A")]
+        public string Address { get; set; }
+
+        [DataMember(Order = 7, Name = "PH")]
+        public string ContactNumber { get; set; }
+
+        [DataMember(Order = 8, Name = "WU")]
+        public string WebsiteUrl { get; set; }
+
+        public 
+    }
+}
