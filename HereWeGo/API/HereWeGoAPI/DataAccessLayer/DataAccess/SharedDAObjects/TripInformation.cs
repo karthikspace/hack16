@@ -16,10 +16,10 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
     public class TripInformation
     {
         [DAPartitionKey]
-        [DataMember(Order = 0, Name = "TID")]
+        [DataMember(Order = 0, Name = "ID")]
         public string TripId { get; set; }
 
-        [DataMember(Order = 1, Name = "TD")]
+        [DataMember(Order = 1, Name = "D")]
         public string DestinationId { get; set; }
 
         [DataMember(Order = 2, Name = "DI")]
@@ -36,5 +36,16 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         /// </summary>
         [DataMember(Order = 5, Name = "LS")]
         public IList<string> Locations { get; set; }
+
+        [DataMember(Order = 6, Name = "TS")]
+        public TripStatus TripStatus { get; set; }
+    }
+
+    public enum TripStatus
+    {
+        Upcoming,
+        InProgress,
+        Completed,
+        Canceled
     }
 }
