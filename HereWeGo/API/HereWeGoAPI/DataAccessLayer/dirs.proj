@@ -1,0 +1,23 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">    
+
+
+  <Import Project="$(EnvironmentConfig)" />
+
+  
+  <ItemGroup>
+
+	<ProjectFile Include="Common\Common.csproj"/>
+
+  
+	<ProjectFile Include="Azure\Azure.csproj"/>
+
+  
+	<ProjectFile Include="DataAccess\DataAccess.csproj"/>
+  
+  </ItemGroup>
+
+  
+   <Import Project="$(ExtendedTargetsPath)\Traversal.targets" />
+  
+
+</Project>
