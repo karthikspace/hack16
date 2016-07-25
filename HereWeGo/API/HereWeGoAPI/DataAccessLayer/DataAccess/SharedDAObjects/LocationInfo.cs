@@ -53,6 +53,12 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
 
         [DataMember(Order = 12, Name = "AR")]
         public float AverageRating { get; set; }
+
+        [DataMember(Order = 13, Name = "LT")]
+        public string Latitude { get; set; }
+
+        [DataMember(Order = 14, Name = "LD")]
+        public string Longitude { get; set; }
     }
 
     public enum Category
