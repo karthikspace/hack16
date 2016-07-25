@@ -27,11 +27,11 @@
             android:label="@string/title_activity_date_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.activity.LocationSelectionActivity"
+            android:name=".ui.activity.DestinationSelectionActivity"
             android:label="@string/title_activity_location_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".ui.activity.ItemSelectionActivity"
+            android:name=".ui.activity.LocationSelectionActivity"
             android:label="@string/title_activity_item_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity

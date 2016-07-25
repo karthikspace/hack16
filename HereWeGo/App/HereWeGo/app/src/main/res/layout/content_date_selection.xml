@@ -12,4 +12,65 @@
     tools:context=".ui.activity.DateSelectionActivity"
     tools:showIn="@layout/activity_date_selection">
 
+    <LinearLayout
+        android:id="@+id/fromDate_view"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:orientation="vertical"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="30dp">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="60dp"
+        android:text="From"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+    <TextView
+        android:id="@+id/fromDate_text"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="30dp"
+        android:onClick="selectFromDate"/>
+    <TextView
+        android:id="@+id/fromTime_text"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:textSize="25dp"
+        android:onClick="selectFromTime"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/toDate_view"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:orientation="vertical"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="30dp"
+        android:layout_below="@+id/fromDate_view">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="60dp"
+            android:text="To" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+        <TextView
+            android:id="@+id/toDate_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="30dp"
+            android:onClick="selectToDate"/>
+        <TextView
+            android:id="@+id/toTime_text"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:textSize="25dp"
+            android:onClick="selectToTime"/>
+    </LinearLayout>
 </RelativeLayout>

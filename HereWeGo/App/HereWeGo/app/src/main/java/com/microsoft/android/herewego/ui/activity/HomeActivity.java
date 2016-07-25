@@ -46,7 +46,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void createNewTrip(View view) {
-        Intent intent = new Intent(this, DateSelectionActivity.class);
+        Intent intent = new Intent(this, DestinationSelectionActivity.class);
         startActivity(intent);
     }
 }
