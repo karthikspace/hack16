@@ -56,40 +56,19 @@ namespace HereWeGoAPI.Controllers
                     }
                 }
             }
-            var slocations = locations.OrderByDescending(x => x.AverageRating).Take(20).ToList();
-            return slocations.Count > 0 ? slocations : null;
+
+            var sortedLocations = locations.OrderByDescending(x => x.AverageRating).Take(20).ToList();
+            return sortedLocations.Count > 0 ? sortedLocations : null;
         }
 
         [HttpGet]
-        public IList<LocationData> GetLocations(string destinationId)
+        public IList<LocationData> GetLocations(string destinationId, int preference)
         {
-            var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
-            if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
+            if (preference < 1)
             {
-                return null;
-            }
-            var locations = new List<LocationData>();
-            foreach (var locationId in destinationInfo.Locations)
-            {
-                var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
-                if (locationData == null)
-                {
-                    continue;
-                }
-
-                // Add location adding logic based on time, rating etc
-                locations.Add(ConvertToLocationData(locationData));
-                if (locations.Count == 20)
-                {
-                    break;
-                }
+                preference = 1;
             }
 
-            return locations.Count > 0 ? locations : null;
-        }
-
-        public IList<DaObjects.LocationInfo> GetLocations(string destinationId,int preference)
-        {
             var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
             if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
             {
@@ -104,23 +83,20 @@ namespace HereWeGoAPI.Controllers
                 {
                     continue;
                 }
-                Random rand = new Random();
-                float rating = (float)rand.Next(0, 5);
-                locationData.AverageRating = rating;
 
-                // Add location adding logic based on time, rating etc
                 locations.Add(locationData);
             }
 
             // Sorting based on Average Rating
-            var slocations = locations.OrderByDescending(x => x.AverageRating).ToList();
-            int limit = 20;
-            var preflocations = new List<DaObjects.LocationInfo>();
-            for ( int i = limit*preference-limit+1;  i<=limit*preference; i++ )
+            var sortedLocations = locations.OrderByDescending(x => x.AverageRating).ToList();
+            var limit = 20;
+            var preferredLocations = new List<LocationData>();
+            for (var i = limit * (preference - 1); i < limit * preference; i++)
             {
-                preflocations.Add(slocations[i]);
+                preferredLocations.Add(ConvertToLocationData(sortedLocations[i]));
             }
-            return preflocations.Count > 0 ? preflocations : null;
+
+            return preferredLocations.Count > 0 ? preferredLocations : null;
         }
 
         [HttpGet]
@@ -279,6 +255,22 @@ namespace HereWeGoAPI.Controllers
                 days.Add("Saturday");
                 days.Add("Sunday");
 
+                IList<string> users = new List<string>()
+                {
+                    "newuser1",
+                    "newuser2",
+                    "newuser3",
+                    "anonymous"
+                };
+
+                IList<string> statements = new List<string>()
+                {
+                    "Very nice place!!!",
+                    "Amazing Place!!..a must visit",
+                    "Pathetic ambience :(",
+                    "Awesome time spent"
+                };
+
                 Random rnd = new Random();
                 for (int i = 2; i <= rowCount; i++)
                 {
@@ -308,9 +300,10 @@ namespace HereWeGoAPI.Controllers
 
                     IDictionary<string, IList<Tuple<DateTime, DateTime>>> openSchedule = new Dictionary<string, IList<Tuple<DateTime, DateTime>>>();
 
-                    for (int k = 0; k < 7; k++)
+                    var numberOfDays = rnd.Next(3, 8);
+                    for (int k = 0; k < numberOfDays; k++)
                     {
-                        string dayOfWeek = days[k];
+                        var dayOfWeek = days[k];
                         var openDateTime1 = new DateTime(2016, 7, 26, 9, 00, 00);
                         var closeDateTime1 = new DateTime(2016, 7, 26, 12, 00, 00);
                         var openDateTime2 = new DateTime(2016, 7, 26, 16, 00, 00);
@@ -331,10 +324,10 @@ namespace HereWeGoAPI.Controllers
                     {
                         var newReview = new DaObjects.Review()
                         {
-                            UserId = "Anonymous",
+                            UserId = users[rnd.Next(4)],
                             Date = new DateTime(2016, 7, 26, 16, 00, 00),
-                            Rating = 3.4f,
-                            Statement = "Brilliant!!..Excellent"
+                            Rating = (float)(rnd.NextDouble() * 5.0),
+                            Statement = statements[rnd.Next(4)]
                         };
 
                         newLocation.Reviews.Add(newReview);
@@ -342,7 +335,7 @@ namespace HereWeGoAPI.Controllers
 
                     newLocation.Category = DaObjects.Category.Entertainment;
 
-                    newLocation.AverageRating = 3.4F;
+                    newLocation.AverageRating = (float)(rnd.NextDouble() * 5.0);
 
                     newLocation.Latitude = xlRange.Cells[i, 4].Value2.ToString();
                     newLocation.Longitude = xlRange.Cells[i, 5].Value2.ToString();
@@ -396,7 +389,7 @@ namespace HereWeGoAPI.Controllers
                 UserId = "NewUser1",
                 FirstName = "Abhishek",
                 LastName = "Gupta",
-                Trips = new List<string>(){newTripId}
+                Trips = new List<string>() { newTripId }
             };
 
             dataAccess.SetObject(newUser);
@@ -442,7 +435,7 @@ namespace HereWeGoAPI.Controllers
                 Latitude = locationInfo.Latitude,
                 AverageRating = locationInfo.AverageRating,
                 OpenSchedule = locationInfo.OpenSchedule,
-                DurationToVisit=locationInfo.DurationToVisit
+                DurationToVisit = locationInfo.DurationToVisit
             };
         }
 
