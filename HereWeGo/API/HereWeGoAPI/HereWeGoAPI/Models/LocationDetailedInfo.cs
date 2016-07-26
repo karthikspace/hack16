@@ -41,7 +41,7 @@ namespace HereWeGoAPI.Models
 
     public class Review
     {
-        public string UserId { get; set; }
+        public UserData UserId { get; set; }
 
         public string Statement { get; set; }
 

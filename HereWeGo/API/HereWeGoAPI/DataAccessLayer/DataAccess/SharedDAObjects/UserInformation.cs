@@ -26,5 +26,11 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
 
         [DataMember(Order = 3, Name = "TS")]
         public IList<string> Trips { get; set; }
+
+        [DataMember(Order = 4, Name = "I")]
+        public string ImageUrl { get; set; }
+
+        [DataMember(Order = 5, Name = "E")]
+        public string Email { get; set; }
     }
 }

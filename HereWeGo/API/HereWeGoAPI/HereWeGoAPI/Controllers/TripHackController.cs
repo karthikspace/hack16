@@ -62,6 +62,36 @@ namespace HereWeGoAPI.Controllers
         }
 
         [HttpGet]
+        public IList<LocationData> GetAllLocations(string destinationId)
+        {
+            var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
+            if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
+            {
+                return null;
+            }
+
+            var locations = new List<LocationData>();
+            foreach (var locationId in destinationInfo.Locations)
+            {
+                var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
+                if (locationData == null)
+                {
+                    continue;
+                }
+
+                var newLocationData = new LocationData()
+                {
+                    Id = locationData.Id,
+                    Name = locationData.Name
+                };
+
+                locations.Add(newLocationData);
+            }
+
+            return locations;
+        }
+
+        [HttpGet]
         public IList<LocationData> GetLocations(string destinationId, int preference)
         {
             if (preference < 1)
@@ -119,7 +149,9 @@ namespace HereWeGoAPI.Controllers
             {
                 UserId = newUser.UserId,
                 FirstName = newUser.FirstName,
-                LastName = newUser.LastName
+                LastName = newUser.LastName,
+                ImageUrl = newUser.ImageUrl,
+                Email = newUser.Email
             };
 
             dataAccess.SetObject(userData);
@@ -483,7 +515,7 @@ namespace HereWeGoAPI.Controllers
                 var user = dataAccess.GetObject<DaObjects.UserInformation>(review.UserId, null);
                 var newReview = new Review()
                 {
-                    UserId = user.FirstName + " " + user.LastName,
+                    UserId = ConvertToUserData(user),
                     Statement = review.Statement,
                     Date = review.Date,
                     Rating = review.Rating
@@ -511,6 +543,18 @@ namespace HereWeGoAPI.Controllers
             }
 
             return serverTripSchedule;
+        }
+
+        private static UserData ConvertToUserData(DaObjects.UserInformation userInformation)
+        {
+            return new UserData()
+            {
+                UserId = userInformation.UserId,
+                LastName = userInformation.LastName,
+                FirstName = userInformation.FirstName,
+                Email = userInformation.Email,
+                ImageUrl = userInformation.ImageUrl
+            };
         }
 
         private static IList<TripSchedule> GetTripScheduleForClient(IList<DaObjects.TripSchedule> tripSchedule)
