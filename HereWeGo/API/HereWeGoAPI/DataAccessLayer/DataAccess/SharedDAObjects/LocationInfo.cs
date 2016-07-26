@@ -62,7 +62,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         public string Longitude { get; set; }
 
         [DataMember(Order = 15, Name = "DN")]
-        public TimeSpan DurationToVisit { get; set; }
+        public int DurationToVisit { get; set; }
     }
 
     public enum Category

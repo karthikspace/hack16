@@ -44,6 +44,7 @@ namespace HereWeGoAPI.Controllers
                 {
                     continue;
                 }
+
                 for (var day = start.Date; day.Date <= end.Date; day = day.AddDays(1))
                 {
                     var dayofweek = day.DayOfWeek.ToString();
@@ -54,6 +55,7 @@ namespace HereWeGoAPI.Controllers
                     }    
                 }
             }
+
             var sortedLocations = locations.OrderByDescending(x => x.AverageRating).Take(20).ToList();
             return sortedLocations.Count > 0 ? sortedLocations : null;
         }
@@ -150,6 +152,26 @@ namespace HereWeGoAPI.Controllers
                 ImageUrl = newUser.ImageUrl,
                 Email = newUser.Email
             };
+
+            dataAccess.SetObject(userData);
+            dataAccess.Flush();
+
+            return true;
+        }
+
+        [HttpPost]
+        public bool UpdateUser(UserData newUser)
+        {
+            var userData = dataAccess.GetObject<DaObjects.UserInformation>(newUser.UserId, null);
+            if (userData == null)
+            {
+                return false;
+            }
+
+            userData.FirstName = newUser.FirstName;
+            userData.LastName = newUser.LastName;
+            userData.ImageUrl = newUser.ImageUrl;
+            userData.Email = newUser.Email;
 
             dataAccess.SetObject(userData);
             dataAccess.Flush();
@@ -355,7 +377,7 @@ namespace HereWeGoAPI.Controllers
                         {
                             UserId = users[rnd.Next(4)],
                             Date = new DateTime(2016, 7, 26, 16, 00, 00),
-                            Rating = (float)(rnd.NextDouble() * 5.0),
+                            Rating = rnd.Next(2,6),
                             Statement = statements[rnd.Next(4)]
                         };
 
@@ -364,18 +386,18 @@ namespace HereWeGoAPI.Controllers
 
                     newLocation.Category = DaObjects.Category.Entertainment;
 
-                    newLocation.AverageRating = (float)(rnd.NextDouble() * 5.0);
+                    newLocation.AverageRating = rnd.Next(2, 5);
 
                     newLocation.Latitude = xlRange.Cells[i, 4].Value2.ToString();
                     newLocation.Longitude = xlRange.Cells[i, 5].Value2.ToString();
-                    newLocation.DurationToVisit = new TimeSpan(rnd.Next(1, 4), 0, 0);
+                    newLocation.DurationToVisit = rnd.Next(1, 3);
                     dataAccess.SetObject(newLocation);
                 }
 
                 xlWorkbook.Close();
 
                 // Populate city -> Location mapping
-                xlWorkbook = xlApp.Workbooks.Open(HostingEnvironment.MapPath(@"~/Controllers/DestinationLocation.csv"));
+                /*xlWorkbook = xlApp.Workbooks.Open(HostingEnvironment.MapPath(@"~/Controllers/DestinationLocation.csv"));
                 xlWorksheet = xlWorkbook.Sheets[1];
                 xlRange = xlWorksheet.UsedRange;
 
@@ -399,7 +421,7 @@ namespace HereWeGoAPI.Controllers
 
                 xlWorkbook.Close();
 
-                dataAccess.SetObject(newDestination);
+                dataAccess.SetObject(newDestination);*/
                 dataAccess.Flush();
                 return "Success";
             }

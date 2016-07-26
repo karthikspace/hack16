@@ -22,6 +22,6 @@
 
         public string Longitude { get; set; }
 
-        public TimeSpan DurationToVisit { get; set; }
+        public int DurationToVisit { get; set; }
     }
 }
