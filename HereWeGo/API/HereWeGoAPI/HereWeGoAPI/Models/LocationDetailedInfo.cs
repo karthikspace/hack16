@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects;
 
 namespace HereWeGoAPI.Models
@@ -39,5 +37,16 @@ namespace HereWeGoAPI.Models
         public string Longitude { get; set; }
 
         public TimeSpan DurationToVisit { get; set; }
+    }
+
+    public class Review
+    {
+        public string UserId { get; set; }
+
+        public string Statement { get; set; }
+
+        public DateTime Date { get; set; }
+
+        public float Rating { get; set; }
     }
 }
