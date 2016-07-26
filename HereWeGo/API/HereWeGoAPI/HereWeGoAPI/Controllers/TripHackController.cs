@@ -47,16 +47,13 @@ namespace HereWeGoAPI.Controllers
                 for (var day = start.Date; day.Date <= end.Date; day = day.AddDays(1))
                 {
                     var dayofweek = day.DayOfWeek.ToString();
-                    var schedule = locationData.OpenSchedule[dayofweek];
-                    // Add location adding logic based on time, rating etc
-                    if (schedule.Count != 0)
+                    if (locationData.OpenSchedule.ContainsKey(dayofweek))
                     {
                         locations.Add(ConvertToLocationData(locationData));
                         break;
-                    }
+                    }    
                 }
             }
-
             var sortedLocations = locations.OrderByDescending(x => x.AverageRating).Take(20).ToList();
             return sortedLocations.Count > 0 ? sortedLocations : null;
         }
