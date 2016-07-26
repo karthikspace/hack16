@@ -6,6 +6,7 @@
 
 namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
 {
+    using System;
     using System.Collections.Generic;
     using System.Runtime.Serialization;
     using Microsoft.RewardsIntl.Platform.DataAccess.Common;
@@ -43,7 +44,7 @@ namespace Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects
         public string WebsiteUrl { get; set; }
 
         [DataMember(Order = 9, Name = "OSD")]
-        public OpenSchedule Schedule { get; set; }
+        public IDictionary<string, IList<Tuple<DateTime, DateTime>>> OpenSchedule { get; set; }
 
         [DataMember(Order = 10, Name = "RS")]
         public IList<Review> Reviews { get; set; }
