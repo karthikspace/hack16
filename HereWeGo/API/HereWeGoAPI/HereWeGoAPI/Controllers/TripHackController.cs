@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
-using System.Web.Mvc;
 using HereWeGoAPI.Models;
 using Microsoft.RewardsIntl.Platform.DataAccess.Azure.DataAccess;
 using Microsoft.RewardsIntl.Platform.DataAccess.Common;
@@ -17,8 +16,7 @@ namespace HereWeGoAPI.Controllers
         {
             dataAccess = DataAccessFactory.CreateDataAccessObject();
         }
-            
-            // GET: TripHack
+
         public LocationData GetLocation(string locationId)
         {
             var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
@@ -79,6 +77,43 @@ namespace HereWeGoAPI.Controllers
             dataAccess.SetObject(userData);
             dataAccess.Flush();
 
+            return true;
+        }
+
+        public IList<DaObjects.TripInformation> GetTrips(string id)
+        {
+            var userInformation = dataAccess.GetObject<DaObjects.UserInformation>(id, null);
+            if (userInformation == null ||
+                userInformation.Trips == null ||
+                userInformation.Trips.Count == 0)
+            {
+                return null;
+            }
+
+            var trips = new List<DaObjects.TripInformation>();
+            foreach(var tripId in userInformation.Trips)
+            {
+                var trip = dataAccess.GetObject<DaObjects.TripInformation>(tripId, null);
+                if (trip == null)
+                {
+                    continue;
+                }
+
+                trips.Add(trip);
+            }
+
+            return trips.Count > 0 ? trips : null;
+        }
+
+        public bool UpdateTrip(DaObjects.TripInformation trip)
+        {
+            if (trip == null)
+            {
+                return false;
+            }
+
+            dataAccess.SetObject(trip);
+            dataAccess.Flush();
             return true;
         }
 
