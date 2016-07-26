@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Web.Hosting;
 using System.Web.Http;
@@ -74,6 +75,42 @@ namespace HereWeGoAPI.Controllers
             return locations.Count > 0 ? locations : null;
         }
 
+        public IList<DaObjects.LocationInfo> GetLocations(string destinationId,int preference)
+        {
+            var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
+            if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
+            {
+                return null;
+            }
+
+            var locations = new List<DaObjects.LocationInfo>();
+            foreach (var locationId in destinationInfo.Locations)
+            {
+                var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
+                if (locationData == null)
+                {
+                    continue;
+                }
+                Random rand = new Random();
+                float rating = (float)rand.Next(0, 5);
+                locationData.AverageRating = rating;
+
+                // Add location adding logic based on time, rating etc
+                locations.Add(locationData);
+            }
+
+            // Sorting based on Average Rating
+            var slocations = locations.OrderByDescending(x => x.AverageRating).ToList();
+            int limit = 20;
+
+            var preflocations = new List<DaObjects.LocationInfo>();
+            for ( int i = limit*preference-limit+1;  i<=limit*preference; i++ )
+            {
+                preflocations.Add(slocations[i]);
+            }
+            return preflocations.Count > 0 ? preflocations : null;
+        }
+
         [HttpGet]
         public IList<string> GetDestinations()
         {
@@ -83,7 +120,8 @@ namespace HereWeGoAPI.Controllers
                 "Goa",
                 "Hyderabad",
                 "Santorini",
-                "Sydney"
+                "Sydney",
+                "Paris"
             };
         }
 
