@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects;
-
-namespace HereWeGoAPI.Models
+﻿namespace HereWeGoAPI.Models
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects;
+
     public class LocationData
     {
         public string Id { get; set; }
@@ -11,21 +12,7 @@ namespace HereWeGoAPI.Models
 
         public IList<string> Images { get; set; }
 
-        public string City { get; set; }
-
-        public string Country { get; set; }
-
-        public string Summary { get; set; }
-
-        public string Address { get; set; }
-
-        public string ContactNumber { get; set; }
-
-        public string WebsiteUrl { get; set; }
-
-        public OpenSchedule Schedule { get; set; }
-
-        public IList<Review> Reviews { get; set; }
+        public IDictionary<string, IList<Tuple<DateTime, DateTime>>> OpenSchedule { get; set; }
 
         public Category Category { get; set; }
 
@@ -34,5 +21,7 @@ namespace HereWeGoAPI.Models
         public string Latitude { get; set; }
 
         public string Longitude { get; set; }
+
+        public TimeSpan DurationToVisit { get; set; }
     }
 }

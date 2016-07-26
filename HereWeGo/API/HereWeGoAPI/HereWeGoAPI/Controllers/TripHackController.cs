@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Web.Hosting;
 using System.Web.Http;
+using HereWeGoAPI.Models;
 using Microsoft.RewardsIntl.Platform.DataAccess.Azure.DataAccess;
 using Microsoft.RewardsIntl.Platform.DataAccess.Common;
 using DaObjects = Microsoft.RewardsIntl.Platform.DataAccess.SharedDAObjects;
@@ -20,13 +21,14 @@ namespace HereWeGoAPI.Controllers
         }
 
         [HttpGet]
-        public DaObjects.LocationInfo GetLocation(string locationId)
+        public LocationDetailedInfo GetLocation(string locationId)
         {
-            return dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
+            var locationInfo = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
+            return ConvertToLocationDetailedData(locationInfo);
         }
 
         [HttpGet]
-        public IList<DaObjects.LocationInfo> GetLocations(string destinationId, DateTime start, DateTime end)
+        public IList<LocationData> GetLocations(string destinationId, DateTime start, DateTime end)
         {
             var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
             if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
@@ -34,7 +36,7 @@ namespace HereWeGoAPI.Controllers
                 return null;
             }
 
-            var locations = new List<DaObjects.LocationInfo>();
+            var locations = new List<LocationData>();
             foreach (var locationId in destinationInfo.Locations)
             {
                 var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
@@ -44,14 +46,19 @@ namespace HereWeGoAPI.Controllers
                 }
 
                 // Add location adding logic based on time, rating etc
-                locations.Add(locationData);
+                locations.Add(ConvertToLocationData(locationData));
+
+                if (locations.Count == 20)
+                {
+                    break;
+                }
             }
 
             return locations.Count > 0 ? locations : null;
         }
 
         [HttpGet]
-        public IList<DaObjects.LocationInfo> GetLocations(string destinationId)
+        public IList<LocationData> GetLocations(string destinationId)
         {
             var destinationInfo = dataAccess.GetObject<DaObjects.Destination>(destinationId, null);
             if (destinationInfo == null || destinationInfo.Locations == null || destinationInfo.Locations.Count == 0)
@@ -59,7 +66,7 @@ namespace HereWeGoAPI.Controllers
                 return null;
             }
 
-            var locations = new List<DaObjects.LocationInfo>();
+            var locations = new List<LocationData>();
             foreach (var locationId in destinationInfo.Locations)
             {
                 var locationData = dataAccess.GetObject<DaObjects.LocationInfo>(locationId, null);
@@ -69,7 +76,11 @@ namespace HereWeGoAPI.Controllers
                 }
 
                 // Add location adding logic based on time, rating etc
-                locations.Add(locationData);
+                locations.Add(ConvertToLocationData(locationData));
+                if (locations.Count == 20)
+                {
+                    break;
+                }
             }
 
             return locations.Count > 0 ? locations : null;
@@ -119,9 +130,8 @@ namespace HereWeGoAPI.Controllers
                 "Amsterdam",
                 "Goa",
                 "Hyderabad",
-                "Santorini",
-                "Sydney",
-                "Paris"
+                "Paris",
+                "Sydney"
             };
         }
 
@@ -142,7 +152,7 @@ namespace HereWeGoAPI.Controllers
         }
 
         [HttpGet]
-        public IList<DaObjects.TripInformation> GetTrips(string id)
+        public IList<TripData> GetTrips(string id)
         {
             var userInformation = dataAccess.GetObject<DaObjects.UserInformation>(id, null);
             if (userInformation == null ||
@@ -152,7 +162,7 @@ namespace HereWeGoAPI.Controllers
                 return null;
             }
 
-            var trips = new List<DaObjects.TripInformation>();
+            var trips = new List<TripData>();
             foreach (var tripId in userInformation.Trips)
             {
                 var trip = dataAccess.GetObject<DaObjects.TripInformation>(tripId, null);
@@ -161,27 +171,37 @@ namespace HereWeGoAPI.Controllers
                     continue;
                 }
 
-                trips.Add(trip);
+                trips.Add(ConvertToTripData(trip));
             }
 
             return trips.Count > 0 ? trips : null;
         }
 
         [HttpPost]
-        public bool UpdateTrip(DaObjects.TripInformation trip)
+        public bool UpdateTrip(TripData newTrip)
         {
-            if (trip == null)
+            if (newTrip == null)
             {
                 return false;
             }
 
-            dataAccess.SetObject(trip);
+            var newTripInfo = new DaObjects.TripInformation()
+            {
+                Locations = newTrip.Locations,
+                TripId = newTrip.TripId,
+                EndDateUTC = newTrip.EndDateUTC,
+                StartDateUTC = newTrip.StartDateUTC,
+                TripStatus = newTrip.TripStatus,
+                DestinationId = newTrip.DestinationId
+            };
+
+            dataAccess.SetObject(newTripInfo);
             dataAccess.Flush();
             return true;
         }
 
         [HttpPost]
-        public string CreateTrip(DaObjects.TripInformation newTrip, string userId)
+        public string CreateTrip(TripData newTrip, string userId)
         {
             var user = dataAccess.GetObject<DaObjects.UserInformation>(userId, null);
             if (user == null)
@@ -189,7 +209,17 @@ namespace HereWeGoAPI.Controllers
                 return null;
             }
 
-            dataAccess.SetObject(newTrip);
+            var newTripInfo = new DaObjects.TripInformation()
+            {
+                Locations = newTrip.Locations,
+                TripId = newTrip.TripId,
+                EndDateUTC = newTrip.EndDateUTC,
+                StartDateUTC = newTrip.StartDateUTC,
+                TripStatus = newTrip.TripStatus,
+                DestinationId = newTrip.DestinationId
+            };
+
+            dataAccess.SetObject(newTripInfo);
             user.Trips = new List<string>(user.Trips);
             user.Trips.Add(newTrip.TripId);
 
@@ -199,7 +229,7 @@ namespace HereWeGoAPI.Controllers
         }
 
         [HttpGet]
-        public DaObjects.TripInformation GetTrip(string userId, string tripId)
+        public TripData GetTrip(string userId, string tripId)
         {
             var user = dataAccess.GetObject<DaObjects.UserInformation>(userId, null);
             if (user == null)
@@ -223,15 +253,14 @@ namespace HereWeGoAPI.Controllers
             dataAccess.SetObject(user);
             dataAccess.Flush();
 
-            return trip;
+            return ConvertToTripData(trip);
         }
 
         [HttpGet]
-        private string FillData()
+        public string FillData()
         {
             try
             {
-                /*
                 Excel.Application xlApp = new Excel.Application();
                 Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(HostingEnvironment.MapPath(@"~/Controllers/paris-attraction.csv"));
                 Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
@@ -247,6 +276,7 @@ namespace HereWeGoAPI.Controllers
                 days.Add("Saturday");
                 days.Add("Sunday");
 
+                Random rnd = new Random();
                 for (int i = 2; i <= rowCount; i++)
                 {
                     var newLocation = new DaObjects.LocationInfo();
@@ -313,16 +343,18 @@ namespace HereWeGoAPI.Controllers
 
                     newLocation.Latitude = xlRange.Cells[i, 4].Value2.ToString();
                     newLocation.Longitude = xlRange.Cells[i, 5].Value2.ToString();
-
+                    newLocation.DurationToVisit = new TimeSpan(rnd.Next(1, 4), 0, 0);
                     dataAccess.SetObject(newLocation);
-                }*/
+                }
 
-                Excel.Application xlApp = new Excel.Application();
-                Excel.Workbook xlWorkbook = xlApp.Workbooks.Open(HostingEnvironment.MapPath(@"~/Controllers/DestinationLocation.csv"));
-                Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-                Excel.Range xlRange = xlWorksheet.UsedRange;
+                xlWorkbook.Close();
 
-                int rowCount = xlRange.Rows.Count;
+                // Populate city -> Location mapping
+                xlWorkbook = xlApp.Workbooks.Open(HostingEnvironment.MapPath(@"~/Controllers/DestinationLocation.csv"));
+                xlWorksheet = xlWorkbook.Sheets[1];
+                xlRange = xlWorksheet.UsedRange;
+
+                rowCount = xlRange.Rows.Count;
                 var newDestination = new DaObjects.Destination();
                 newDestination.Id = xlRange.Cells[1, 1].Value2.ToString();
                 newDestination.Name = newDestination.Id;
@@ -340,6 +372,8 @@ namespace HereWeGoAPI.Controllers
 
                 newDestination.Locations = locations;
 
+                xlWorkbook.Close();
+
                 dataAccess.SetObject(newDestination);
                 dataAccess.Flush();
                 return "Success";
@@ -348,6 +382,100 @@ namespace HereWeGoAPI.Controllers
             {
                 return ex.Message;
             }
+        }
+
+        [HttpGet]
+        public string FillTripData()
+        {
+            var newTripId = Guid.NewGuid().ToString();
+            var newUser = new DaObjects.UserInformation()
+            {
+                UserId = "NewUser1",
+                FirstName = "Abhishek",
+                LastName = "Gupta",
+                Trips = new List<string>(){newTripId}
+            };
+
+            dataAccess.SetObject(newUser);
+
+            var newTrip = new DaObjects.TripInformation()
+            {
+                DestinationId = "Paris",
+                TripId = newTripId,
+                TripStatus = DaObjects.TripStatus.Upcoming,
+                StartDateUTC = new DateTime(2016, 12, 25, 10, 0, 0),
+                EndDateUTC = new DateTime(2016, 12, 25, 10, 0, 0),
+                Locations = new List<DaObjects.TripSchedule>()
+                {
+                    new DaObjects.TripSchedule()
+                    {
+                        LocationId = "4ADCDA03F964A520C03121E3",
+                        Start = new DateTime(2016, 12, 25, 12, 0, 0),
+                        End = new DateTime(2016, 12, 25, 14, 0, 0)
+                    },
+                    new DaObjects.TripSchedule()
+                    {
+                        LocationId = "4ADCDA05F964A520963221E3",
+                        Start = new DateTime(2016, 12, 25, 16, 0, 0),
+                        End = new DateTime(2016, 12, 25, 17, 0, 0)
+                    }
+                }
+            };
+
+            dataAccess.SetObject(newTrip);
+            dataAccess.Flush();
+            return "success";
+        }
+
+        private LocationData ConvertToLocationData(DaObjects.LocationInfo locationInfo)
+        {
+            return new LocationData()
+            {
+                Id = locationInfo.Id,
+                Images = locationInfo.Images,
+                Longitude = locationInfo.Longitude,
+                Name = locationInfo.Name,
+                Category = locationInfo.Category,
+                Latitude = locationInfo.Latitude,
+                AverageRating = locationInfo.AverageRating,
+                OpenSchedule = locationInfo.OpenSchedule
+            };
+        }
+
+        private LocationDetailedInfo ConvertToLocationDetailedData(DaObjects.LocationInfo locationInfo)
+        {
+            return new LocationDetailedInfo()
+            {
+                Id = locationInfo.Id,
+                Images = locationInfo.Images,
+                Longitude = locationInfo.Longitude,
+                Name = locationInfo.Name,
+                Category = locationInfo.Category,
+                Latitude = locationInfo.Latitude,
+                AverageRating = locationInfo.AverageRating,
+                OpenSchedule = locationInfo.OpenSchedule,
+                City = locationInfo.City,
+                Reviews = locationInfo.Reviews,
+                Country = locationInfo.Country,
+                ContactNumber = locationInfo.ContactNumber,
+                Address = locationInfo.Address,
+                Summary = locationInfo.Summary,
+                WebsiteUrl = locationInfo.WebsiteUrl,
+                DurationToVisit = locationInfo.DurationToVisit
+            };
+        }
+
+        private TripData ConvertToTripData(DaObjects.TripInformation tripDetails)
+        {
+            return new TripData()
+            {
+                Locations = tripDetails.Locations,
+                EndDateUTC = tripDetails.EndDateUTC,
+                StartDateUTC = tripDetails.StartDateUTC,
+                TripStatus = tripDetails.TripStatus,
+                TripId = tripDetails.TripId,
+                DestinationId = tripDetails.DestinationId
+            };
         }
     }
 }
