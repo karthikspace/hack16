@@ -44,17 +44,20 @@ namespace HereWeGoAPI.Controllers
                 {
                     continue;
                 }
-
-                // Add location adding logic based on time, rating etc
-                locations.Add(ConvertToLocationData(locationData));
-
-                if (locations.Count == 20)
+                for (var day = start.Date; day.Date <= end.Date; day = day.AddDays(1))
                 {
-                    break;
+                    var dayofweek = day.DayOfWeek.ToString();
+                    var schedule = locationData.OpenSchedule[dayofweek];
+                    // Add location adding logic based on time, rating etc
+                    if (schedule.Count != 0)
+                    {
+                        locations.Add(ConvertToLocationData(locationData));
+                        break;
+                    }
                 }
             }
-
-            return locations.Count > 0 ? locations : null;
+            var slocations = locations.OrderByDescending(x => x.AverageRating).Take(20).ToList();
+            return slocations.Count > 0 ? slocations : null;
         }
 
         [HttpGet]
@@ -65,7 +68,6 @@ namespace HereWeGoAPI.Controllers
             {
                 return null;
             }
-
             var locations = new List<LocationData>();
             foreach (var locationId in destinationInfo.Locations)
             {
@@ -113,7 +115,6 @@ namespace HereWeGoAPI.Controllers
             // Sorting based on Average Rating
             var slocations = locations.OrderByDescending(x => x.AverageRating).ToList();
             int limit = 20;
-
             var preflocations = new List<DaObjects.LocationInfo>();
             for ( int i = limit*preference-limit+1;  i<=limit*preference; i++ )
             {
@@ -438,7 +439,8 @@ namespace HereWeGoAPI.Controllers
                 Category = locationInfo.Category,
                 Latitude = locationInfo.Latitude,
                 AverageRating = locationInfo.AverageRating,
-                OpenSchedule = locationInfo.OpenSchedule
+                OpenSchedule = locationInfo.OpenSchedule,
+                DurationToVisit=locationInfo.DurationToVisit
             };
         }
 
