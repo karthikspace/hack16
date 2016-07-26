@@ -22,5 +22,16 @@ namespace HereWeGoAPI.Models
         public IList<TripSchedule> Locations { get; set; }
 
         public TripStatus TripStatus { get; set; }
+
+        public string UserId { get; set; }
+    }
+
+    public class TripSchedule
+    {
+        public DateTime Start { get; set; }
+
+        public DateTime End { get; set; }
+
+        public string LocationId { get; set; }
     }
 }

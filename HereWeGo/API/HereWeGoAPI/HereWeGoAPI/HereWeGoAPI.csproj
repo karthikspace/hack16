@@ -152,6 +152,7 @@
     <Compile Include="Models\LocationData.cs" />
     <Compile Include="Models\LocationDetailedInfo.cs" />
     <Compile Include="Models\TripData.cs" />
+    <Compile Include="Models\UserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

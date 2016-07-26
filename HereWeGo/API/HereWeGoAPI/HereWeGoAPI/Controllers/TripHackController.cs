@@ -137,13 +137,13 @@ namespace HereWeGoAPI.Controllers
         }
 
         [HttpPost]
-        public bool AddUser(string id, string fn, string ln)
+        public bool AddUser(UserData newUser)
         {
             var userData = new DaObjects.UserInformation()
             {
-                UserId = id,
-                FirstName = fn,
-                LastName = ln
+                UserId = newUser.UserId,
+                FirstName = newUser.FirstName,
+                LastName = newUser.LastName
             };
 
             dataAccess.SetObject(userData);
@@ -186,25 +186,27 @@ namespace HereWeGoAPI.Controllers
                 return false;
             }
 
-            var newTripInfo = new DaObjects.TripInformation()
+            var existingTrip = dataAccess.GetObject<DaObjects.TripInformation>(newTrip.TripId, null);
+            if (existingTrip == null)
             {
-                Locations = newTrip.Locations,
-                TripId = newTrip.TripId,
-                EndDateUTC = newTrip.EndDateUTC,
-                StartDateUTC = newTrip.StartDateUTC,
-                TripStatus = newTrip.TripStatus,
-                DestinationId = newTrip.DestinationId
-            };
+                return false;
+            }
 
-            dataAccess.SetObject(newTripInfo);
+            existingTrip.Locations = GetTripScheduleForServer(newTrip.Locations);
+            existingTrip.EndDateUTC = newTrip.EndDateUTC;
+            existingTrip.StartDateUTC = newTrip.StartDateUTC;
+            existingTrip.TripStatus = newTrip.TripStatus;
+            existingTrip.DestinationId = newTrip.DestinationId;
+
+            dataAccess.SetObject(existingTrip);
             dataAccess.Flush();
             return true;
         }
 
         [HttpPost]
-        public string CreateTrip(TripData newTrip, string userId)
+        public string CreateTrip(TripData newTrip)
         {
-            var user = dataAccess.GetObject<DaObjects.UserInformation>(userId, null);
+            var user = dataAccess.GetObject<DaObjects.UserInformation>(newTrip.UserId, null);
             if (user == null)
             {
                 return null;
@@ -212,7 +214,7 @@ namespace HereWeGoAPI.Controllers
 
             var newTripInfo = new DaObjects.TripInformation()
             {
-                Locations = newTrip.Locations,
+                Locations = GetTripScheduleForServer(newTrip.Locations),
                 TripId = newTrip.TripId,
                 EndDateUTC = newTrip.EndDateUTC,
                 StartDateUTC = newTrip.StartDateUTC,
@@ -221,7 +223,7 @@ namespace HereWeGoAPI.Controllers
             };
 
             dataAccess.SetObject(newTripInfo);
-            user.Trips = new List<string>(user.Trips);
+            user.Trips = user.Trips == null ? new List<string>() : new List<string>(user.Trips);
             user.Trips.Add(newTrip.TripId);
 
             dataAccess.SetObject(user);
@@ -428,7 +430,7 @@ namespace HereWeGoAPI.Controllers
             return "success";
         }
 
-        private LocationData ConvertToLocationData(DaObjects.LocationInfo locationInfo)
+        private static LocationData ConvertToLocationData(DaObjects.LocationInfo locationInfo)
         {
             return new LocationData()
             {
@@ -444,7 +446,7 @@ namespace HereWeGoAPI.Controllers
             };
         }
 
-        private LocationDetailedInfo ConvertToLocationDetailedData(DaObjects.LocationInfo locationInfo)
+        private static LocationDetailedInfo ConvertToLocationDetailedData(DaObjects.LocationInfo locationInfo)
         {
             return new LocationDetailedInfo()
             {
@@ -457,7 +459,7 @@ namespace HereWeGoAPI.Controllers
                 AverageRating = locationInfo.AverageRating,
                 OpenSchedule = locationInfo.OpenSchedule,
                 City = locationInfo.City,
-                Reviews = locationInfo.Reviews,
+                Reviews = GetReviews(locationInfo.Reviews),
                 Country = locationInfo.Country,
                 ContactNumber = locationInfo.ContactNumber,
                 Address = locationInfo.Address,
@@ -467,17 +469,73 @@ namespace HereWeGoAPI.Controllers
             };
         }
 
-        private TripData ConvertToTripData(DaObjects.TripInformation tripDetails)
+        private static TripData ConvertToTripData(DaObjects.TripInformation tripDetails)
         {
             return new TripData()
             {
-                Locations = tripDetails.Locations,
+                Locations = GetTripScheduleForClient(tripDetails.Locations),
                 EndDateUTC = tripDetails.EndDateUTC,
                 StartDateUTC = tripDetails.StartDateUTC,
                 TripStatus = tripDetails.TripStatus,
                 TripId = tripDetails.TripId,
                 DestinationId = tripDetails.DestinationId
             };
+        }
+
+        private static IList<Review> GetReviews(IList<DaObjects.Review> reviews)
+        {
+            var newReviews = new List<Review>();
+            foreach (var review in reviews)
+            {
+                var user = dataAccess.GetObject<DaObjects.UserInformation>(review.UserId, null);
+                var newReview = new Review()
+                {
+                    UserId = user.FirstName + " " + user.LastName,
+                    Statement = review.Statement,
+                    Date = review.Date,
+                    Rating = review.Rating
+                };
+
+                newReviews.Add(newReview);
+            }
+
+            return newReviews;
+        }
+
+        private static IList<DaObjects.TripSchedule> GetTripScheduleForServer(IList<TripSchedule> tripSchedule)
+        {
+            var serverTripSchedule = new List<DaObjects.TripSchedule>();
+            foreach (var tripLocation in tripSchedule)
+            {
+                var newEntry = new DaObjects.TripSchedule()
+                {
+                    End = tripLocation.End,
+                    Start = tripLocation.Start,
+                    LocationId = tripLocation.LocationId
+                };
+
+                serverTripSchedule.Add(newEntry);
+            }
+
+            return serverTripSchedule;
+        }
+
+        private static IList<TripSchedule> GetTripScheduleForClient(IList<DaObjects.TripSchedule> tripSchedule)
+        {
+            var clientTripSchedule = new List<TripSchedule>();
+            foreach (var tripLocation in tripSchedule)
+            {
+                var newEntry = new TripSchedule()
+                {
+                    End = tripLocation.End,
+                    Start = tripLocation.Start,
+                    LocationId = tripLocation.LocationId
+                };
+
+                clientTripSchedule.Add(newEntry);
+            }
+
+            return clientTripSchedule;
         }
     }
 }
